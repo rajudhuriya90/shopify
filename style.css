@@ -1,0 +1,748 @@
+
+
+
+/* ─── 1. Design Tokens (CSS Custom Properties) ──────────────────
+   Centralised design variables. Change one value here
+   and every component that uses it updates automatically.
+   In Shopify, these can be overridden per-theme.
+─────────────────────────────────────────────────────────────── */
+:root {
+  /* Colours */
+  --bg:           #F5F3EE;   /* page background         */
+  --surface:      #FFFFFF;   /* card background         */
+  --border:       #E5E0D8;   /* all borders             */
+  --text:         #1A1714;   /* primary text            */
+  --muted:        #8A8480;   /* secondary / hint text   */
+  --accent:       #2D6A4F;   /* free-shipping green     */
+  --accent-light: #D8F3DC;   /* green banner bg         */
+  --gift:         #5C4B91;   /* mystery gift purple     */
+  --gift-light:   #EAE6F7;   /* purple banner bg        */
+  --danger:       #C0392B;   /* validation errors       */
+
+  /* Spatial */
+  --radius:     12px;
+  --shadow:     0 2px 16px rgba(0, 0, 0, 0.07);
+
+  /* Motion — one place to control all transition speed */
+  --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ─── 2. Reset & Base ───────────────────────────────────────────
+   Minimal reset to ensure consistent cross-browser rendering.
+─────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* ─── 3. Page Layout ────────────────────────────────────────────
+   Two-column grid: cart (fluid) + settings panel (fixed 360px).
+   Stacks to single column on mobile via media query.
+─────────────────────────────────────────────────────────────── */
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.page-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 36px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ─── 4. Card Component ─────────────────────────────────────────
+   Reusable white card with border and shadow.
+   Used for the cart panel, settings panel, and state inspector.
+─────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.card-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.cart-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cart-badge-wrap {
+  position: relative;
+  font-size: 1.5rem;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: var(--text);
+  color: #fff;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+}
+
+
+/* ─── 5. Reward Banners ─────────────────────────────────────────
+   Hidden by default using max-height:0 and opacity:0.
+   When JS adds the .visible class, CSS transitions animate them
+   smoothly in — no JavaScript animation needed.
+─────────────────────────────────────────────────────────────── */
+.reward-banner {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 0.92rem;
+
+  /* Collapsed state */
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 18px;
+
+  /* Smooth expand/collapse */
+  transition:
+    max-height var(--transition),
+    opacity    var(--transition),
+    padding    var(--transition),
+    margin     var(--transition);
+}
+
+/* Expanded state — added by JS via classList.toggle('visible') */
+.reward-banner.visible {
+  max-height: 80px;
+  opacity: 1;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+/* Colour variants */
+.reward-banner.shipping {
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid #B7E4C7;
+}
+
+.reward-banner.gift {
+  background: var(--gift-light);
+  color: var(--gift);
+  border: 1px solid #C9C0EE;
+}
+
+.reward-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+
+/* ─── 6. Progress Bar ───────────────────────────────────────────
+   Two-milestone track showing progress toward shipping & gift.
+   Milestone dots are absolutely positioned along the track.
+─────────────────────────────────────────────────────────────── */
+.progress-wrap {
+  margin-bottom: 24px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.progress-track {
+  height: 8px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: visible;     /* allows milestone dots to overflow */
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  position: relative;
+
+  /* Smooth width change as cart total changes */
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+}
+
+/* Colour states controlled by JS via className swap */
+.progress-fill.shipping { background: var(--accent); }
+.progress-fill.gift     { background: var(--gift); }
+.progress-fill.none     { background: #C8C4BC; }
+
+/* Milestone dots sit on the track, positioned by JS inline style */
+.milestone {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);   /* white ring */
+  transition: background var(--transition);
+  z-index: 2;
+}
+
+.milestone.reached       { background: var(--accent); }
+.milestone.reached.gift-ms { background: var(--gift); }
+.milestone.unreached     { background: var(--border); }
+
+
+/* ─── 7. Cart Table ─────────────────────────────────────────────
+   CSS Grid table: Product | Price | Quantity | Total
+   Each row is its own grid with the same column widths.
+─────────────────────────────────────────────────────────────── */
+.cart-header {
+  display: grid;
+  grid-template-columns: 1fr 100px 130px 90px;
+  gap: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+}
+
+.cart-header span:not(:first-child) {
+  text-align: center;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr 100px 130px 90px;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  transition: opacity var(--transition);
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+/* Product info cell */
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.item-thumb {
+  width: 68px;
+  height: 68px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.item-name    { font-weight: 500; font-size: 0.92rem; }
+.item-variant { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+.item-remove {
+  font-size: 0.75rem;
+  color: #3B82F6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 4px;
+  font-family: inherit;
+  text-decoration: underline;
+  display: block;
+}
+
+.item-price,
+.item-total {
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+
+/* ─── 8. Quantity Stepper ───────────────────────────────────────
+   −  [qty]  + control. Styled as a compact inline group.
+─────────────────────────────────────────────────────────────── */
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+  color: var(--text);
+}
+
+.qty-btn:hover { background: var(--border); }
+
+.qty-val {
+  width: 34px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-left: none;
+  border-right: none;
+  height: 30px;
+  line-height: 30px;
+  background: var(--surface);
+}
+
+
+/* ─── 9. Subtotal Row ───────────────────────────────────────────
+   Subtotal label + animated free shipping note + total amount.
+─────────────────────────────────────────────────────────────── */
+.subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 0;
+  margin-top: 4px;
+}
+
+.subtotal-label  { font-size: 0.92rem; font-weight: 600; }
+
+.subtotal-amount {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+}
+
+/* Free shipping note — appears with CSS transition when threshold met */
+.free-ship-note {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: height var(--transition), opacity var(--transition);
+}
+
+.free-ship-note.visible {
+  height: 24px;
+  opacity: 1;
+}
+
+
+/* ─── 10. CTA Buttons ───────────────────────────────────────────
+─────────────────────────────────────────────────────────────── */
+.cta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-outline {
+  padding: 11px 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  color: var(--text);
+  transition: background var(--transition);
+}
+.btn-outline:hover { background: var(--bg); }
+
+.btn-primary {
+  padding: 11px 28px;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity var(--transition);
+}
+.btn-primary:hover { opacity: 0.85; }
+
+
+/* ─── 11. Mystery Gift Bottom Banner ────────────────────────────
+   Shows until the gift threshold is reached. Hidden by JS after.
+─────────────────────────────────────────────────────────────── */
+.mystery-banner {
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 16px 20px;
+  background: var(--gift-light);
+  border: 1px solid #C9C0EE;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.mystery-icon {
+  width: 42px;
+  height: 42px;
+  background: var(--gift);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.mystery-content { flex: 1; }
+
+.mystery-text strong { font-size: 0.9rem; color: var(--gift); }
+.mystery-text p      { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+
+.mystery-progress-track {
+  height: 5px;
+  background: #D4CEEF;
+  border-radius: 99px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.mystery-progress-fill {
+  height: 100%;
+  background: var(--gift);
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mystery-goal {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 4px;
+}
+
+.rewards-footer-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 12px;
+}
+
+
+/* ─── 12. Settings Panel ────────────────────────────────────────
+   Admin-facing form to update reward thresholds live.
+─────────────────────────────────────────────────────────────── */
+.settings-field {
+  margin-bottom: 20px;
+}
+
+.settings-field label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.88rem;
+  margin-bottom: 6px;
+}
+
+.settings-field .hint {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--transition);
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: var(--gift);
+}
+
+.settings-info {
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.8rem;
+  color: #4338CA;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 13px;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity var(--transition), background var(--transition);
+}
+.btn-save:hover        { opacity: 0.85; }
+.btn-save.saved        { background: var(--accent); }
+
+/* State Inspector */
+.state-debug {
+  font-size: 0.74rem;
+  color: var(--muted);
+  font-family: 'Courier New', monospace;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+
+/* ─── 13. Toast Notification ────────────────────────────────────
+   Floats in bottom-right. JS adds/removes .show class.
+─────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--text);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  transform: translateY(20px);
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+
+/* ─── 14. Explainer / System Design Section ─────────────────────
+   Documentation section explaining how the code works.
+─────────────────────────────────────────────────────────────── */
+.explainer {
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  padding-top: 40px;
+}
+
+.explainer-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.explainer-sub {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin-bottom: 36px;
+}
+
+/* Architecture diagram card */
+.arch-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin: 24px 0;
+}
+
+.arch-diagram h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.arch-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.arch-node {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 100px;
+}
+
+.arch-node small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.arch-node.highlight  { background: var(--accent-light); border-color: #B7E4C7; color: var(--accent); }
+.arch-node.highlight2 { background: var(--gift-light);   border-color: #C9C0EE; color: var(--gift); }
+
+.arch-arrow  { color: var(--muted); font-size: 1.2rem; }
+.arch-note   { font-size: 0.8rem; color: var(--muted); margin-top: 16px; }
+
+.event-flow-list {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 2;
+}
+
+/* Module explanation cards */
+.sections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.ex-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.ex-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ex-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--bg);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.ex-card > p {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 0;
+}
+
+/* Code snippet blocks inside explainer cards */
+.code-block {
+  background: #1A1714;
+  color: #D4C5A9;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  line-height: 1.6;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+/* Syntax highlight colour classes */
+.c-kw  { color: #FF79C6; }   /* keyword:  const, return, if */
+.c-fn  { color: #50FA7B; }   /* function: addItem, compute  */
+.c-str { color: #F1FA8C; }   /* string:  'cart:change'       */
+.c-cm  { color: #6272A4; font-style: italic; } /* comment  */
+.c-num { color: #BD93F9; }   /* number:  3000, 5000          */

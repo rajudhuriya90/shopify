@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart Rewards — Shopify Feature</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+
+  <h1 class="page-title">🛒 Cart Reward Feature</h1>
+  <p class="page-sub">Shopify-style dynamic cart with real-time reward thresholds · System Design Demo</p>
+
+  <div class="layout">
+
+    <!-- ═══════════════════════════════
+         LEFT COLUMN: Cart
+    ════════════════════════════════ -->
+    <div>
+      <div class="card">
+
+        <!-- Cart Header -->
+        <div class="cart-top">
+          <div>
+            <div class="card-title">Your Cart</div>
+            <div class="card-sub">Items in your bag</div>
+          </div>
+          <div class="cart-badge-wrap">
+            🛍️
+            <span id="cart-badge" class="cart-badge"></span>
+          </div>
+        </div>
+
+        <!-- ── Reward Banners (hidden by default, shown via JS) ── -->
+        <div id="banner-shipping" class="reward-banner shipping">
+          <span class="reward-icon">🎁</span>
+          <span>Congratulations! You unlocked <strong>free shipping</strong>.</span>
+        </div>
+        <div id="banner-gift" class="reward-banner gift">
+          <span class="reward-icon">🎊</span>
+          <span>You unlocked a <strong>mystery gift!</strong> 🎉</span>
+        </div>
+
+        <!-- ── Progress Bar ── -->
+        <div class="progress-wrap">
+          <div class="progress-info">
+            <span id="progress-label">Add more to unlock rewards</span>
+            <span id="progress-goal"></span>
+          </div>
+          <div class="progress-track">
+            <div id="progress-fill" class="progress-fill none" style="width:0%"></div>
+            <div id="ms-ship" class="milestone unreached" style="left:0%"></div>
+            <div id="ms-gift" class="milestone unreached" style="left:100%"></div>
+          </div>
+        </div>
+
+        <!-- ── Cart Table ── -->
+        <div class="cart-header">
+          <span>Product</span>
+          <span>Price</span>
+          <span>Quantity</span>
+          <span>Total</span>
+        </div>
+
+        <!-- Cart items injected here by CartUI.renderItems() -->
+        <div id="cart-items-container"></div>
+
+        <!-- ── Subtotal Row ── -->
+        <div class="subtotal-row">
+          <div>
+            <div class="subtotal-label">Subtotal</div>
+            <div id="free-ship-note" class="free-ship-note">
+              <span>🚚</span> Congrats! You've unlocked free shipping.
+            </div>
+          </div>
+          <div id="subtotal-amount" class="subtotal-amount">₹0</div>
+        </div>
+
+        <!-- ── Action Buttons ── -->
+        <div class="cta-row">
+          <button class="btn-outline" onclick="CartUI.addRandomItem()">+ Add Item</button>
+          <button class="btn-primary">Checkout →</button>
+        </div>
+
+        <!-- ── Mystery Gift Bottom Banner ── -->
+        <div id="mystery-banner" class="mystery-banner" style="display:none">
+          <div class="mystery-icon">🎁</div>
+          <div class="mystery-content">
+            <div class="mystery-text">
+              <strong id="mystery-text-main"></strong>
+              <p>Rewards update automatically when cart changes.</p>
+            </div>
+            <div class="mystery-progress-track">
+              <div id="mystery-fill" class="mystery-progress-fill" style="width:0%"></div>
+            </div>
+            <div class="mystery-goal" id="mystery-goal-label"></div>
+          </div>
+        </div>
+
+        <p class="rewards-footer-note">
+          Rewards update automatically when cart changes.
+        </p>
+
+      </div>
+    </div><!-- /LEFT COLUMN -->
+
+
+    <!-- ═══════════════════════════════
+         RIGHT COLUMN: Settings + Debug
+    ════════════════════════════════ -->
+    <div>
+
+      <!-- Admin Settings Panel -->
+      <div class="card">
+        <div class="card-title">Rewards Settings</div>
+        <div class="card-sub">Update the reward thresholds below.</div>
+
+        <div class="settings-field">
+          <label for="input-ship">Free Shipping Threshold (₹)</label>
+          <input type="number" id="input-ship" class="settings-input" min="0" step="100">
+          <div class="hint">Show free shipping message when cart total is more than this value.</div>
+        </div>
+
+        <div class="settings-field">
+          <label for="input-gift">Mystery Gift Threshold (₹)</label>
+          <input type="number" id="input-gift" class="settings-input" min="0" step="100">
+          <div class="hint">Show mystery gift message when cart total is more than this value.</div>
+        </div>
+
+        <div class="settings-info">
+          <span>ℹ️</span>
+          <span>Changes here will reflect on the store in real time.</span>
+        </div>
+
+        <button class="btn-save" id="btn-save" onclick="SettingsPanel.save()">
+          <span>💾</span> Save Settings
+        </button>
+      </div>
+
+    
+
+    </div><!-- /RIGHT COLUMN -->
+
+  </div><!-- /layout -->
+
+
+
+<!-- Toast notification -->
+<div id="toast" class="toast"></div>
+
+<!-- Scripts loaded at end of body so DOM is ready -->
+<script src="app.js"></script>
+
+</body>
+</html>
