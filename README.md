@@ -49,7 +49,7 @@ project/
 
 # Setup Instructions
 1. Clone Repository
-git clone https://github.com/rajudhuriya90/cart-rewards-feature.git
+git clone https://github.com/rajudhuriya90/shopify
 
 2. Open Project
 cd shopify
