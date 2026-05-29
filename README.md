@@ -6,7 +6,7 @@ This project demonstrates how modern ecommerce cart systems can be built without
 
 
 
-Features
+# Features
 Free shipping reward threshold
 Mystery gift reward threshold
 Dynamic progress bar
@@ -29,7 +29,7 @@ No frameworks or external libraries used.
 
 
 
-Folder Structure
+# Folder Structure
 project/
 │
 ├── index.html
@@ -47,7 +47,7 @@ project/
 
 
 
-Setup Instructions
+# Setup Instructions
 1. Clone Repository
 git clone https://github.com/rajudhuriya90/cart-rewards-feature.git
 
@@ -62,7 +62,7 @@ in the browser.
 Or use VS Code Live Server extension.
 
 
-Architecture Overview
+# Architecture Overview
 
 This project follows the Observer Pattern (Publish-Subscribe) architecture.
 
@@ -78,7 +78,7 @@ testable
 maintainable
 replaceable modules
 
-Demo Logic
+# # Demo Logic
 
 Initial seeded cart:
 
@@ -95,7 +95,7 @@ free shipping
 progress milestone updates
 
 
-How To Start
+# How To Start
 Option 1 — Directly Open in Browser
 
 Open:
@@ -126,5 +126,11 @@ Click:
 Open with Live Server
 
 Project will start automatically in browser.
+
+# Author
+
+Built by Raju Dhuriya
+
+Frontend Developer focused on scalable ecommerce UI and Vanilla JavaScript architecture.
 
 
