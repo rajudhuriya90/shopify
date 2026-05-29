@@ -134,3 +134,17 @@ Built by Raju Dhuriya
 Frontend Developer focused on scalable ecommerce UI and Vanilla JavaScript architecture.
 
 
+
+# Screenshots
+
+## Main UI
+
+![Demo UI](assets/screenshots/demo-ui.png)
+
+## Threshold Settings
+
+![Threshold Settings](assets/screenshots/threshold-settings.png)
+
+## System Design
+
+![System Design](assets/screenshots/system-design.png)
